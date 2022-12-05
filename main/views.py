@@ -12,9 +12,9 @@ def main(request):
     
     return render(request, 'main/main.html', {'title': 'Main Page'})
 
-def profile(request):
+def portfolio(request):
     context = {
         'users': users,
     }
-    return render(request, 'main/profile.html', context)
+    return render(request, 'main/portfolio.html', context)
 
