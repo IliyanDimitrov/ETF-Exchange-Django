@@ -61,7 +61,7 @@ def register(request):
 
             email.fail_silently = True
             email.send()
-            return redirect('login')
+            return redirect('two_factor:login')
 
     else:
         form = UserRegistrationForm()
@@ -71,6 +71,10 @@ def register(request):
 @login_required
 def profile(request):
     return render(request, 'users/profile.html')
+
+@login_required
+def portfolio(request):
+    return render(request, 'main/portfolio.html')
  
 def activate(request, uidb64, token):
     try:
@@ -85,7 +89,7 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         messages.success(request, "Your Account has been activated!!")
-        return redirect('login')
+        return redirect('two_factor:login')
         
     else:
         return render(request, 'users/activation_failed.html')

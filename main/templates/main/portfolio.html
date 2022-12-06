@@ -1,7 +1,5 @@
 {% extends "main/base.html" %}
 {% block content %}
-    {% for user in users %}
-        <h1>Client: {{ user.name }}</h1>
+        <h1>Client: {{ user.first_name }} {{user.last_name}}</h1>
         <p>Portfolio</p>
-    {% endfor %}
 {% endblock content %}

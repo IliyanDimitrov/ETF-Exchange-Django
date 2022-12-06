@@ -2,4 +2,6 @@
 {% load crispy_forms_tags %}
 {% block content %}
 <h1>Client: {{ user.username }}</h1>
+<a href="{% url 'two_factor:profile'%}"
+       class="float-right btn btn-link">2FA Management Pane</a>
 {% endblock content %}
