@@ -12,10 +12,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from . tokens import generate_token
 
-
-
 def register(request):
-
     #Making sure the user cannot access registeration page if logged in
     if request.user.is_authenticated is True:
         return render(request, 'users/profile.html')
@@ -26,6 +23,7 @@ def register(request):
             user = form.save()
             # default to non-active
             user.is_active = False
+            user.is_staff = False
             user.save()
 
             #Email details
