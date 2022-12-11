@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 class Profile(models.Model):
     user = models.OneToOneField(User, verbose_name=(""), on_delete=models.CASCADE)
     image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+    dob = models.DateField(blank=True, null=True)
+    address = models.CharField(max_length=200, default='')
 
     def __str__(self):
         return f'{self.user.username} Profile'
