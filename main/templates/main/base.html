@@ -13,12 +13,6 @@
     {% else %}
     <title>ETF Exchange</title>
     {% endif %}
-    <script>
-        // Define a function that sets the contenteditable attribute of the form to true
-        function makeFormEditable() {
-          document.getElementById("profile-edit").setAttribute("contenteditable", true);
-        }
-      </script>
 </head>
 
 <body>
@@ -32,7 +26,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarToggle">
                     <div class="navbar-nav mr-auto">
-                        <a class="nav-item nav-link" href="{% url 'user-home' %}">Home</a>
+                        {% comment %} <a class="nav-item nav-link" href="{% url 'user-home' %}">Home</a> {% endcomment %}
                     </div>
                     <!-- Navbar Right Side -->
                     <div class="navbar-nav">

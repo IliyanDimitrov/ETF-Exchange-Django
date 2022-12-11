@@ -14,9 +14,8 @@
            <p class="text-secondary"><a href="{% url 'two_factor:profile'%}"
               class="float-right btn btn-link">2FA Management Panel</a></p>
          </div>
-         <button onclick="makeFormEditable()">Edit Form</button>
        </div>
-       <form id="profile-edit" contenteditable="false" method="POST" enctype="multipart/form-data">
+       <form id="profile-edit" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <fieldset class="form-group">
             <legend class="border-bottom mb-4">Profile</legend>

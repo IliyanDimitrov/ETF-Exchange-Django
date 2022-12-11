@@ -150,6 +150,4 @@ LOGIN_REDIRECT_URL = 'user-home'
 # LOGIN_REDIRECT_URL = 'two_factor:profile'
 LOGIN_URL = 'two_factor:login'
 
-# AUTH_USER_MODEL = 'users.CustomUser'
-
  
