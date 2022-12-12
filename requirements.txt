@@ -1,7 +1,9 @@
 django
+virtualenv
 django-crispy-forms
 autopep8
 six
 django-two-factor-auth
 phonenumbers
 Pillow
+tiingo

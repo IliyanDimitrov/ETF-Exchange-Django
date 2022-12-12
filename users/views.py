@@ -4,7 +4,7 @@ from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from stockexchange import settings
 from django.core.mail import send_mail, EmailMessage
 from django.contrib.auth.models import User
-from django.contrib.auth import login
+# from django.contrib.auth import login
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -24,9 +24,19 @@ def register(request):
     #Making sure the user cannot access registeration page if logged in
     if request.user.is_authenticated is True:
         return render(request, 'users/profile.html')
-
+    
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
+        form_email = form['email'].value()
+        existing_users = User.objects.filter(email=form_email)
+
+        # Existing Email Check
+        if existing_users.count():
+            messages.warning(request, f'Email has been used already!')
+            form = UserRegisterForm()
+            return render(request, 'users/register.html', {'form': form})
+
+        # Validate form input and remove user admin priviliges
         if form.is_valid():
             user = form.save()
             # default to non-active
@@ -40,17 +50,22 @@ def register(request):
             current_site = get_current_site(request)
             domain = current_site.domain
             name = User.objects.last().first_name
+
             # Site account creation message.
             messages.success(
                 request, f'Your account has been created. Please confirm your email to finish your registration!')
-            # Welcome Email
+
+            # Welcome Email Setup
             subject = 'Welcome to ETF Exchange'
             message = "Thanks for having us. Please confirm your email to finish your registration!"
             sender = settings.EMAIL_HOST_USER
             receiver = User.objects.last().email
             password = settings.EMAIL_HOST_PASSWORD
+
+            # Welcome Email Dispatch
             send_mail(subject, message, sender, [receiver], fail_silently=False, auth_password=password)
-            # Confiramation Email
+
+            # Confiramation Email Setup
             email_subject = "Confirm your Email @ ETF Exchange"
             message2 = render_to_string('users/confirmation_email.html', {
                 'name': user.first_name,
@@ -59,19 +74,23 @@ def register(request):
                 'token': generate_token.make_token(user)
             })
 
+            # Confiramation Email Setup
             email = EmailMessage(
                 email_subject,
                 message2,
                 settings.EMAIL_HOST_USER,
                 [receiver],
             )
-
+            # Confiramation Email Dispatch
             email.fail_silently = True
             email.send()
             return redirect('two_factor:login')
     else:
+        #Error message and registration form reset
+        messages.warning(
+                     request, f'Error please try again!')
         form = UserRegisterForm()
-    return render(request, 'users/register.html', {'form': form})
+        return render(request, 'users/register.html', {'form': form})
 
 
 @login_required

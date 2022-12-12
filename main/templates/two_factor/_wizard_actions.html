@@ -13,4 +13,7 @@
   <button disabled name="" type="button" class="btn btn-outline-info">{% trans "Back" %}</button>
 {% endif %}
 <button type="submit" class="btn btn-primary btn-inline-info">{% trans "Next" %}</button>
+<small class="text-muted">
+  <a class="ml-2" href="{% url 'password_reset' %}">Forgotten Password?</a>
+</small>
 </div>
