@@ -4,7 +4,6 @@ from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from stockexchange import settings
 from django.core.mail import send_mail, EmailMessage
 from django.contrib.auth.models import User
-# from django.contrib.auth import login
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -92,7 +91,7 @@ def register(request):
         form = UserRegisterForm()
         return render(request, 'users/register.html', {'form': form})
 
-
+# Profile protected route
 @login_required
 @user_passes_test(is_client)
 def profile(request):
@@ -111,18 +110,19 @@ def profile(request):
         u_form = UserUpdateForm(instance=request.user)
         p_form = ProfileUpdateForm(instance=request.user.profile)
     
-
     context = {
        'u_form': u_form,
        'p_form': p_form, 
     }
     return render(request, 'users/profile.html', context)
 
+# Portfolio protected route
 @login_required
 @user_passes_test(is_client)
 def portfolio(request):
     return render(request, 'main/portfolio.html')
 
+# Verify the user through the activation link
 def activate(request, uidb64, token):
     try:
         user_id = force_str(urlsafe_base64_decode(uidb64))
@@ -130,7 +130,7 @@ def activate(request, uidb64, token):
         messages.success(
                 request, f'Your account has been created. Please confirm your email to finish your registration!')
     except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-        myuser = None
+        user = None
     
     if user is not None and generate_token.check_token(user, token):
         user.is_active = True
