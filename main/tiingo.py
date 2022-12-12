@@ -1,8 +1,8 @@
 import requests
-
+from stockexchange import env 
 headers = {
     'Content-Type': 'application/json',
-    'Authorization': 'Token b6b5e1f7311e71d060c0fdfac7bb17cf42b0f26b',
+    'Authorization': env.TIINGO_TOKEN,
 }
 
 def get_meta_data(ticker):
