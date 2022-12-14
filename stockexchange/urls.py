@@ -21,10 +21,17 @@ from two_factor.urls import urlpatterns as tf_urls
 from django.conf import settings
 from django.conf.urls.static import static
 
+from django.views.generic import TemplateView
+from users.views import AdminView
+
 urlpatterns = [
     path('', include('main.urls')),
     path('', include(tf_urls)),
-    path('admin/', admin.site.urls),
+    # Default django admin route
+    # path('admin/', admin.site.urls),
+    # Custom Admin view
+    path('admin/', AdminView.as_view(template_name='users/admin.html'), name='admin'),    
+    path('admin/update-user-profile/<str:username>/', user_views.update_user_profile, name='update_user_profile'),    
     path('register/', user_views.register, name='register'),
     path('activate/<uidb64>/<token>', user_views.activate, name="activate"),
     path('profile/', user_views.profile, name='profile'),

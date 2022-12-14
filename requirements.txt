@@ -7,4 +7,3 @@ django-two-factor-auth
 phonenumbers
 Pillow
 tiingo
-django_tables2

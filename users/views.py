@@ -12,12 +12,85 @@ from . tokens import generate_token
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
 
+# AdminView class dependencies
+from .forms import UserSearchForm
+from django.contrib import admin
+from django.views import View
+from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 # Function to check if the user is a client
 def is_client(user):
     if user.is_staff or user.is_superuser:
         return False
     else:
         return True
+
+# Create a new view for the admin page
+class AdminView(LoginRequiredMixin, TemplateView):
+    # Set the template for the view
+    template_name = 'users/admin.html'
+
+    def dispatch(self, request, *args, **kwargs):
+    # Check if the user is a staff or admin
+        if not request.user.is_staff and not request.user.is_superuser:
+        # If not, redirect to the home page
+            return redirect('home')
+
+    # If the user is a staff or admin, proceed with handling the request
+        return super().dispatch(request, *args, **kwargs)
+
+    # Add a form for searching for users by username
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = UserSearchForm()
+        return context
+
+    # Handle POST requests
+    def post(self, request, *args, **kwargs):
+
+        # Check if the user is a staff or admin
+        if not request.user.is_staff and not request.user.is_superuser:
+        # If not, redirect to the home page
+            return redirect('home')
+
+        form = UserSearchForm(request.POST)
+        if form.is_valid():
+            # Perform the search and return the results
+            users = User.objects.filter(username=form.cleaned_data['username'])
+            return render(request, self.template_name, {'users': users})
+        else:
+            return render(request, self.template_name, {'form': form})
+
+# Admin view for updating users
+@login_required
+def update_user_profile(request, username):
+    user = User.objects.get(username=username)
+    # Check if the user is a staff or admin
+    if not request.user.is_staff and not request.user.is_superuser:
+        # If not, redirect to the home page
+        return redirect('home')
+
+    if request.method == 'POST':
+        u_form = UserUpdateForm(request.POST, instance=user)
+        p_form = ProfileUpdateForm(request.POST, 
+        request.FILES, 
+        instance=user.profile)
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(
+                request, f'User\'s account has been updated.')
+            return redirect('admin')
+    else:
+        u_form = UserUpdateForm(instance=user)
+        p_form = ProfileUpdateForm(instance=user.profile)
+    
+    context = {
+       'u_form': u_form,
+       'p_form': p_form, 
+    }
+    return render(request, 'users/update_user_profile.html', context)
 
 def register(request):
     #Making sure the user cannot access registeration page if logged in
@@ -140,4 +213,3 @@ def activate(request, uidb64, token):
         
     else:
         return render(request, 'users/activation_failed.html')
-

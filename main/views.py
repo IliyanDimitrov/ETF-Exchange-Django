@@ -4,7 +4,6 @@ from django.contrib.auth.decorators import user_passes_test
 
 from django.http import HttpResponseRedirect
 from .forms import TickerForm
-from .tables import EtfTable
 from .tiingo import get_meta_data, get_price_data, get_data_from_api
 from .models import Transaction
 
