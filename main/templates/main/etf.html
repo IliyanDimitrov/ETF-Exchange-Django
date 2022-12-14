@@ -2,10 +2,25 @@
 {% load crispy_forms_tags %}
 {% block content %} 
 <div class="container text-center mt-5">
-    <form action="/etf/" method="POST">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <input type="submit" value="Submit">
-    </form>
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Symbol</th>
+        <th scope="col">Name</th>
+        <th scope="col">Price</th>
+        <th scope="col">Buy</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for etf in data %}
+      <tr>
+        <td>{{ etf.name.ticker }}</td>
+        <td>{{ etf.name.name }}</td>
+        <td>{{ etf.price.open }}</td>
+        <td><button class="btn btn-primary">Buy</button></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 {% endblock %}

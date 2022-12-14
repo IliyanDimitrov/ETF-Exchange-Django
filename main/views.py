@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import user_passes_test
 
 from django.http import HttpResponseRedirect
 from .forms import TickerForm
-from .tiingo import get_meta_data, get_price_data
+from .tables import EtfTable
+from .tiingo import get_meta_data, get_price_data, get_data_from_api
 from .models import Transaction
 
 # Function to check if the user is a client
@@ -22,9 +23,12 @@ def main(request):
 def portfolio(request):
     return render(request, 'main/portfolio.html')
 
+def etf(request):
+    data = get_data_from_api
+    return render(request, 'main/etf.html', {'data': data})
 
 # Searching bar
-def etf(request):
+def etf_search(request):
     if request.method =='POST':
         form = TickerForm(request.POST)
         if form.is_valid():
@@ -32,7 +36,7 @@ def etf(request):
             return HttpResponseRedirect(ticker)
     else:
         form = TickerForm()
-    return render(request, 'main/etf.html', {'form': form})
+        return render(request, 'main/etf_search.html', {'form': form})
 
 #Retrieve ETF information
 def ticker(request, id):
