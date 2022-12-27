@@ -1,5 +1,6 @@
 {% extends "main/base.html" %}
 {% block content %} 
+<!-- HTML -->
 <div class="container text-center mt-5">
   <table class="table">
     <thead>
@@ -15,11 +16,97 @@
       <tr>
         <td>{{ etf.name.ticker }}</td>
         <td>{{ etf.name.name }}</td>
-        <td>{{ etf.price.open }}</td>
-        <td><button class="btn btn-primary">Buy</button></td>
+        <td>${{ etf.price.open }}</td>
+        <td>
+          <button type="button" 
+                  class="btn btn-primary" 
+                  data-toggle="modal" 
+                  data-target="#addToCartModal" 
+                  data-ticker="{{ etf.name.ticker }}" 
+                  data-name="{{ etf.name.name }}" 
+                  data-open-price="{{ etf.price.open }}">
+                  Buy</button>
+        </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="addToCartModal" tabindex="-1" role="dialog" aria-labelledby="addToCartModalLabel" aria-hidden="true">
+  {% csrf_token %}
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addToCartModalLabel"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Price: $<span id="modalPrice"></span>
+        <form>
+            <div class="form-group">
+                <label for="quantityInput">Quantity</label>
+                <input type="number" class="form-control" id="quantityInput" placeholder="Enter quantity">
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" onclick="sendToCheckout()">Checkout</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function() {
+    // When the modal is shown, update the modal title and price
+    $('#addToCartModal').on('show.bs.modal', function(event) {
+      var button = event.relatedTarget; // Button that triggered the modal
+      var ticker = button.getAttribute('data-ticker');
+      var name = button.getAttribute('data-name');
+      var openPrice = button.getAttribute('data-open-price');
+  
+      document.getElementById('addToCartModalLabel').innerHTML = ticker + " - " + name; // Set the modal title
+      document.getElementById('modalPrice').innerHTML = openPrice; // Set the modal price
+    });
+  });
+  
+  function sendToCheckout() {
+    // Get the form data
+    const ticker = document.getElementById('addToCartModalLabel').textContent.split(' - ')[0];
+    const name = document.getElementById('addToCartModalLabel').textContent.split(' - ')[1];
+    const price = document.getElementById('modalPrice').textContent;
+    const quantity = document.getElementById('quantityInput').value;
+    const type = 'BUY';
+    const csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+  
+    // Send a POST request to the view using fetch
+    fetch('/orders/create/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'X-CSRFToken': csrfmiddlewaretoken,
+      },
+      body: `ticker=${ticker}&name=${name}&price=${price}&quantity=${quantity}&type=${type}`,
+    })
+      .then((response) => {
+        if (response.status === 200) {
+          // The request was successful, redirect to the checkout page
+          window.location.href = '/orders/checkout/';
+        } else {
+          // There was an error, display an alert
+          alert('There was an error creating the order. Please try again.');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        alert('There was an error creating the order. Please try again.');
+      });
+  }
+</script>
 {% endblock %}
+

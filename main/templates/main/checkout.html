@@ -1,0 +1,75 @@
+{% extends "main/base.html" %}
+{% block content %}
+<script src="https://www.paypal.com/sdk/js?client-id={{ paypal_id }}"></script>
+<div class="container text-center mt-5">
+    <h1>Checkout</h1>
+    {% if order %}
+    <table class="table">
+        {% csrf_token %}
+    <tr>
+        <th>Delete</th>
+        <th>Ticker</th>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Total</th>
+        <th>Pay</th>
+    </tr>
+    <tr>
+        <td>
+            <form method="post" action="{% url 'delete_order' order.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+        </td>
+        <td>{{ order.ticker }}</td>
+        <td>{{ order.name }}</td>
+        <td>{{ order.price }}
+        <td>{{ order.quantity }}</td>
+        <td>{{ order.total }}</td>
+        <td>
+          <div id="paypal-button-container"></div>
+        </td>
+    </tr>
+    </table>
+    {% else %}
+        <p>There are no orders to display.</p>
+    {% endif %}
+</div>
+
+{% comment %} {% load static %}
+<script src="{% static 'main/paypal.js' %}" type="text/javascript"></script> {% endcomment %}
+
+<script>
+    paypal.Buttons({
+      createOrder: function(data, actions) {
+          return actions.order.create({
+              purchase_units: [{
+                  amount: {
+                      'currency_code': 'USD',
+                      'value': {{ order.total }},
+          }
+              }]
+          });
+      },
+      onApprove: function (data, actions) {
+        const csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+        return actions.order.capture().then(function (details) {
+            // Send a request to your Django backend to update the order
+            fetch('/orders/update/{{ order.id }}/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfmiddlewaretoken,
+                },
+                body: JSON.stringify({fulfilled: true})
+            }).then(function(response) {
+                // Redirect the user to a thank you page or some other location
+                window.location.href = '/portfolio/';
+            });
+        });
+    }
+    }).render('#paypal-button-container');
+  </script>
+
+{% endblock %}

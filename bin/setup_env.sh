@@ -1,5 +1,5 @@
-#sudo apt install python3-venv
-python3 -m venv venv
+# sudo apt install python3-venv
+# python3 -m venv venv
 activate() {
     . ./venv/bin/activate
     echo "installing requirements to virtual environment"

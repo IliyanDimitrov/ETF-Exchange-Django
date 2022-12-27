@@ -2,4 +2,31 @@
 {% block content %}
         <h1>Client: {{ user.first_name }} {{user.last_name}}</h1>
         <p>Portfolio</p>
+        <table class="table">
+            <tr>
+                <th>Ticker</th>
+                <th>Name</th>
+                <th>Balance Price</th>
+                <th>Current Price</th>
+                <th>Quantity</th>
+                <th>Date</th>
+                <th>PnL</th>
+            </tr>
+            {% for balance in balances %}
+            <tr>
+                <td>{{ balance.ticker }}</td>
+                <td>{{ balance.name }}</td>
+                <td>${{ balance.price }}</td>
+                {# Get the current price for the ETF #}
+                <td>${{ balance.current_price }}</td>
+                <td>{{ balance.quantity }}</td>
+                <td>{{ balance.date }}</td>
+                {% if balance.pnl > 0 %}
+                <td style="color: green; font-weight: bold; text-shadow: 0px 0px 1px rgba(92, 217, 41, 1);">+ ${{ balance.pnl }}</td>
+                {% else %}
+                <td style="color: red; font-weight: bold; text-shadow: 0px 0px 1px rgba(217, 41, 41, 1);">- ${{ balance.pnl }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </table>
 {% endblock content %}

@@ -32,9 +32,6 @@ SECRET_KEY = SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -48,6 +45,7 @@ INSTALLED_APPS = [
     'two_factor',
     'two_factor.plugins.phonenumber',  # <- if you want phone number capability.
     'two_factor.plugins.email',  # <- if you want email capability.
+    'paypal.standard.ipn',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -151,4 +149,6 @@ LOGIN_REDIRECT_URL = 'home'
 # LOGIN_REDIRECT_URL = 'two_factor:profile'
 LOGIN_URL = 'two_factor:login'
 
- 
+PAYPAL_RECEIVER_EMAIL = PAYPAL_RECEIVER_EMAIL
+PAYPAL_CLIENT_ID = PAYPAL_CLIENT_ID
+PAYPAL_CLIENT_SECRET = PAYPAL_CLIENT_SECRET
