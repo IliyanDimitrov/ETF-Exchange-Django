@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'crispy_forms',
     'chartjs',
+    'django_cron',
     'django_otp',
     'django_otp.plugins.otp_static',
     'django_otp.plugins.otp_totp',
@@ -153,3 +154,7 @@ LOGIN_URL = 'two_factor:login'
 PAYPAL_RECEIVER_EMAIL = PAYPAL_RECEIVER_EMAIL
 PAYPAL_CLIENT_ID = PAYPAL_CLIENT_ID
 PAYPAL_CLIENT_SECRET = PAYPAL_CLIENT_SECRET
+
+CRON_CLASSES = [
+    "main.cron.MyCronJob",
+]

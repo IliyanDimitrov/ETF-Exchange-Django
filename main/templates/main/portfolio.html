@@ -33,7 +33,9 @@
 
 
         <h1>Client: {{ user.first_name }} {{user.last_name}}</h1>
-        <p>Portfolio</p>
+        <p>Portfolio: ${{ total_pnl|add:principal }}</p>
+        <p>Total PnL: ${{ total_pnl }}</p>
+        <p>Principal: ${{ principal }}</p>
         <table class="table">
             <tr>
                 <th>Ticker</th>

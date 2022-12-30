@@ -8,13 +8,13 @@ from django.http import HttpResponse, HttpResponseRedirect
 from .forms import TickerForm
 from .tiingo import get_meta_data, get_price_data, get_data_from_api
 from stockexchange import settings
-from .models import Order, Balance
+from .models import Order, Balance, PortfolioPnL
 from decimal import Decimal
+from django.contrib.auth.models import User
 
 
 import uuid
 import os
-
 
 # Function to check if the user is a client
 def is_client(user):
@@ -26,6 +26,40 @@ def is_client(user):
 def main(request):
     return render(request, 'main/main.html', {'title': 'Main Page'})
 
+
+# def portfolio(request):
+#     user = request.user
+#     balances = Balance.objects.filter(user=user)
+
+#     # Check if there are any unfulfilled orders
+#     if Order.objects.filter(user=user, fulfilled=False).exists():
+#         Order.objects.filter(user=user, fulfilled=False).delete()
+
+#     #PnL model fields
+#     principal = 0    
+#     total_pnl = 0
+#     # Get the current price for each ETF in the user's portfolio
+#     for balance in balances:
+#         current_price = get_price_data(balance.ticker)
+#         balance.current_price = round(Decimal(current_price['close']), 2)
+
+#         # Calculate the PnL for each ETF
+#         balance.pnl = (balance.current_price - balance.buy_price) * balance.quantity
+#         # Sum total Pnl
+#         total_pnl += balance.pnl
+#         principal += balance.buy_price * balance.quantity
+#         # Save the total PnL for the user's portfolio
+#         portfolio_pnl = PortfolioPnL(user=user, pnl=total_pnl, principal=principal)
+#         portfolio_pnl.save()
+   
+
+#     context = {
+#         'user': user,
+#         'balances': balances,
+#         'total_pnl': total_pnl,
+#         'principal': principal,
+#     }
+#     return render(request, 'main/portfolio.html', context)
 @login_required
 @user_passes_test(is_client)
 def portfolio(request):
@@ -35,7 +69,11 @@ def portfolio(request):
     # Check if there are any unfulfilled orders
     if Order.objects.filter(user=user, fulfilled=False).exists():
         Order.objects.filter(user=user, fulfilled=False).delete()
-        
+
+    # Get the latest PnL values from the PortfolioPnL model
+    portfolio_pnl = PortfolioPnL.objects.filter(user=user).latest('date')
+    total_pnl = portfolio_pnl.pnl
+    principal = portfolio_pnl.principal
 
     # Get the current price for each ETF in the user's portfolio
     for balance in balances:
@@ -48,8 +86,31 @@ def portfolio(request):
     context = {
         'user': user,
         'balances': balances,
+        'total_pnl': total_pnl,
+        'principal': principal,
     }
     return render(request, 'main/portfolio.html', context)
+# def update_portfolio_pnl():
+#     # Get all users
+#     users = User.objects.all()
+
+#     # Calculate and save the PnL for each user's portfolio
+#     for user in users:
+#         balances = Balance.objects.filter(user=user)
+#         total_pnl = 0
+#         principal = 0
+
+#         # Calculate the PnL for each ETF in the user's portfolio
+#         for balance in balances:
+#             current_price = get_price_data(balance.ticker)
+#             balance.current_price = round(Decimal(current_price['close']), 2)
+#             balance.pnl = (balance.current_price - balance.buy_price) * balance.quantity
+#             total_pnl += balance.pnl
+#             principal += balance.buy_price * balance.quantity
+
+#         # Save the total PnL for the user's portfolio
+#         portfolio_pnl = PortfolioPnL(user=user, pnl=total_pnl, principal=principal)
+#         portfolio_pnl.save()
 
 def etf(request):
     data = get_data_from_api()
