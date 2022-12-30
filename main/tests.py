@@ -60,7 +60,7 @@ class OrderModelIntegrationTestCase(TransactionTestCase):
 class BalanceModelTest(TestCase):
     def test_string_representation(self):
         # Create a balance with some test data
-        balance = Balance(ticker='AAPL', name='Apple Inc.', price=Decimal('10.50'), quantity=10)
+        balance = Balance(ticker='AAPL', name='Apple Inc.', buy_price=Decimal('10.50'), quantity=10)
 
         # Check that the string representation of the balance is as expected
         self.assertEqual(str(balance), 'AAPL - Apple Inc. - 10.50 - 10')
@@ -72,7 +72,7 @@ class BalanceModelIntegrationTest(TransactionTestCase):
         self.balance = Balance.objects.create(
             ticker='AAPL',
             name='Apple Inc.',
-            price=10.50,
+            buy_price=10.50,
             quantity=10,
             user=self.user
         )
@@ -85,16 +85,16 @@ class BalanceModelIntegrationTest(TransactionTestCase):
     
     def test_update_price(self):
         """Tests that the price field can be updated and saved to the database."""
-        self.balance.price = 12.50
+        self.balance.buy_price = 12.50
         self.balance.save()
-        self.assertEqual(Balance.objects.get(pk=self.balance.pk).price, 12.50)
+        self.assertEqual(Balance.objects.get(pk=self.balance.pk).buy_price, 12.50)
     
     def test_create_balance(self):
         """Tests that a new balance can be created and saved to the database."""
         balance = Balance.objects.create(
             ticker='GOOG',
             name='Google Inc.',
-            price=1000.00,
+            buy_price=1000.00,
             quantity=1,
             user=self.user
         )

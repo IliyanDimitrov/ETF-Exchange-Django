@@ -43,7 +43,7 @@ def portfolio(request):
         balance.current_price = round(Decimal(current_price['close']), 2)
 
         # Calculate the PnL for each ETF
-        balance.pnl = (balance.current_price - balance.price) * balance.quantity
+        balance.pnl = (balance.current_price - balance.buy_price) * balance.quantity
 
     context = {
         'user': user,
@@ -123,11 +123,21 @@ def update_order(request, pk):
     order.fulfilled = fulfilled
     order.fulfilled_date = datetime.datetime.now()
     order.save()
-    if order.fulfilled:
+    try:
+        # after the order is fulfiled the etf balance is updated and saved
+        balance = Balance.objects.get(ticker=order.ticker, user=order.user)
+        balance.quantity += order.quantity
+        balance.buy_price = (balance.buy_price *
+                             balance.quantity + 
+                             order.price * 
+                             order.quantity) / (balance.quantity + order.quantity)
+        balance.save()
+        # if there is no balance for the particular etf, new record is created
+    except Balance.DoesNotExist:
         balance = Balance(
             ticker=order.ticker,
             name=order.name,
-            price=order.price,
+            buy_price=order.price,
             quantity=order.quantity,
             user=order.user
         )

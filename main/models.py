@@ -15,18 +15,24 @@ class Order(models.Model):
     @property
     def total(self):
         return self.price * self.quantity
+        
     def __str__(self):
         return f'{self.ticker} - {self.name} - {self.price} - {self.quantity}'
 
 class Balance(models.Model):
     ticker = models.CharField(max_length=10)
     name = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    buy_price = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.PositiveIntegerField()
-    date = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     @property
     def total(self):
-        return self.price * self.quantity
+        return self.buy_price * self.quantity
+
     def __str__(self):
-        return f'{self.ticker} - {self.name} - {self.price} - {self.quantity}'
+        return f'{self.ticker} - {self.name} - {self.buy_price} - {self.quantity}'
+
+class PortfolioPnL(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    pnl = models.DecimalField(max_digits=10, decimal_places=2)
+    date = models.DateTimeField(auto_now_add=True)
