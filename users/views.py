@@ -92,8 +92,42 @@ def update_user_profile(request, username):
     }
     return render(request, 'users/update_user_profile.html', context)
 
+# def update_user_profile(request, username):
+#     user = User.objects.get(username=username)
+#     # Check if the user is a staff or admin
+#     if not request.user.is_staff and not request.user.is_superuser:
+#         # If not, redirect to the home page
+#         return redirect('home')
+
+#     # Initialize the list of users as an empty list
+#     users = []
+
+#     if request.method == 'POST':
+#         u_form = UserUpdateForm(request.POST, instance=user)
+#         p_form = ProfileUpdateForm(request.POST, 
+#         request.FILES, 
+#         instance=user.profile)
+#         if u_form.is_valid() and p_form.is_valid():
+#             u_form.save()
+#             p_form.save()
+#             messages.success(request, f'User\'s account has been updated.')
+
+#         # Retrieve the list of users based on the search query
+#         if 'username' in request.POST:
+#             users = User.objects.filter(username__icontains=request.POST.get('username'))
+#     else:
+#         u_form = UserUpdateForm(instance=user)
+#         p_form = ProfileUpdateForm(instance=user.profile)
+    
+#     context = {
+#        'u_form': u_form,
+#        'p_form': p_form,
+#        'users': users
+#     }
+#     return render(request, 'users/update_user_profile.html', context)
+
 def register(request):
-    #Making sure the user cannot access registeration page if logged in
+    #Making sure the user cannot access registeration page if logged in 
     if request.user.is_authenticated is True:
         return render(request, 'users/profile.html')
     

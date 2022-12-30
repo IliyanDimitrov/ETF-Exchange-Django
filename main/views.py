@@ -1,3 +1,4 @@
+import datetime
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import user_passes_test
@@ -9,7 +10,6 @@ from .tiingo import get_meta_data, get_price_data, get_data_from_api
 from stockexchange import settings
 from .models import Order, Balance
 from decimal import Decimal
-from datetime import datetime, timedelta
 
 
 import uuid
@@ -31,6 +31,11 @@ def main(request):
 def portfolio(request):
     user = request.user
     balances = Balance.objects.filter(user=user)
+
+    # Check if there are any unfulfilled orders
+    if Order.objects.filter(user=user, fulfilled=False).exists():
+        Order.objects.filter(user=user, fulfilled=False).delete()
+        
 
     # Get the current price for each ETF in the user's portfolio
     for balance in balances:
@@ -105,7 +110,6 @@ def create_order(request):
             quantity=quantity,
             type=type,
             user=user,
-            # expiry_time=datetime.now() + timedelta(minutes=1),  # set the expiry time to 1 minute from now
         )
         return redirect('/orders/checkout/')  # Redirect to the checkout page
     else:
@@ -117,6 +121,7 @@ def update_order(request, pk):
     order = get_object_or_404(Order, pk=pk)
     fulfilled = request.POST.get('fulfilled', True)
     order.fulfilled = fulfilled
+    order.fulfilled_date = datetime.datetime.now()
     order.save()
     if order.fulfilled:
         balance = Balance(

@@ -27,7 +27,7 @@
         <td>{{ order.price }}
         <td>{{ order.quantity }}</td>
         <td>{{ order.total }}</td>
-        <td>
+        <td id="paypal-custom-button">
           <div id="paypal-button-container"></div>
         </td>
     </tr>
@@ -37,39 +37,58 @@
     {% endif %}
 </div>
 
-{% comment %} {% load static %}
-<script src="{% static 'main/paypal.js' %}" type="text/javascript"></script> {% endcomment %}
-
 <script>
+    // Declare a global variable to store the timeoutID
+    let timeoutID;
+    
+    // Start the timer when the page loads
+    timeoutID = setTimeout(function() {
+        // Redirect to the portfolio page
+        alert("Session Expired. Try Again.")
+        window.location.href = '/portfolio/';
+    }, 60000);
+    
     paypal.Buttons({
-      createOrder: function(data, actions) {
-          return actions.order.create({
-              purchase_units: [{
-                  amount: {
-                      'currency_code': 'USD',
-                      'value': {{ order.total }},
-          }
-              }]
-          });
-      },
-      onApprove: function (data, actions) {
-        const csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
-        return actions.order.capture().then(function (details) {
-            // Send a request to your Django backend to update the order
-            fetch('/orders/update/{{ order.id }}/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrfmiddlewaretoken,
-                },
-                body: JSON.stringify({fulfilled: true})
-            }).then(function(response) {
-                // Redirect the user to a thank you page or some other location
+        onClick: function(data, actions) {
+            // Cancel the timeout that was set when the page loads
+            clearTimeout(timeoutID);
+    
+            // Update the timer to facilitate the need to finish payment procedure
+            timeoutID = setTimeout(function() {
+                // Redirect to the portfolio page
+                console.log("I am here")
+                alert("Session Expired. Try Again.")
                 window.location.href = '/portfolio/';
+            }, 120000);
+        },
+        createOrder: function(data, actions) {
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        'currency_code': 'USD',
+                        'value': {{ order.total }},
+                    }
+                }]
             });
-        });
-    }
+        },
+        onApprove: function (data, actions) {
+            const csrfmiddlewaretoken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+            return actions.order.capture().then(function (details) {
+                // Send a request to your Django backend to update the order
+                fetch('/orders/update/{{ order.id }}/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrfmiddlewaretoken,
+                    },
+                    body: JSON.stringify({fulfilled: true})
+                }).then(function(response) {
+                    // Redirect the user to a thank you page or some other location
+                    window.location.href = '/portfolio/';
+                });
+            });
+        }
     }).render('#paypal-button-container');
-  </script>
+</script>
 
 {% endblock %}
