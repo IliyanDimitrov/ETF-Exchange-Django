@@ -10,7 +10,7 @@ class Order(models.Model):
     type = models.CharField(max_length=4, choices=[('BUY', 'Buy'), ('SELL', 'Sell')])
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-    fulfilled = models.BooleanField(default=False, unique=False)
+    fulfilled = models.BooleanField(default=False)
     fulfilled_date = models.DateTimeField(null=True, blank=True)
     @property
     def total(self):

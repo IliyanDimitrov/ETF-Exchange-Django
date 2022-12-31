@@ -76,28 +76,7 @@ def portfolio(request):
     return render(request, 'main/portfolio.html', context)
 
 
-# def update_portfolio_pnl():
-#     # Get all users
-#     users = User.objects.all()
-
-#     # Calculate and save the PnL for each user's portfolio
-#     for user in users:
-#         balances = Balance.objects.filter(user=user)
-#         total_pnl = 0
-#         principal = 0
-
-#         # Calculate the PnL for each ETF in the user's portfolio
-#         for balance in balances:
-#             current_price = get_price_data(balance.ticker)
-#             balance.current_price = round(Decimal(current_price['close']), 2)
-#             balance.pnl = (balance.current_price - balance.buy_price) * balance.quantity
-#             total_pnl += balance.pnl
-#             principal += balance.buy_price * balance.quantity
-
-#         # Save the total PnL for the user's portfolio
-#         portfolio_pnl = PortfolioPnL(user=user, pnl=total_pnl, principal=principal)
-#         portfolio_pnl.save()
-
+# ETF page
 def etf(request):
     data = get_data_from_api()
     return render(request, 'main/etf.html', {'data': data})
@@ -123,9 +102,7 @@ def ticker(request, id):
 
 #Order View
 def checkout(request):
-    # Retrieve the order details from the database
-    #orders = Order.objects.filter(fulfilled=False)
-    # Replace with the actual order PK
+   
     order = Order.objects.last()  
     
     context = {
