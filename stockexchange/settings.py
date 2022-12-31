@@ -15,7 +15,6 @@ from pathlib import Path
 from .env import *
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-APPLICATION_DIR = os.path.dirname(globals()['__file__'])
 
 EMAIL_BACKEND = EMAIL_BACKEND
 EMAIL_USE_TLS = EMAIL_USE_TLS
@@ -39,8 +38,6 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'main.apps.MainConfig',
     'crispy_forms',
-    'django_nvd3',
-    'djangobower',
     'django_cron',
     'django_otp',
     'django_otp.plugins.otp_static',
@@ -160,12 +157,3 @@ PAYPAL_CLIENT_SECRET = PAYPAL_CLIENT_SECRET
 CRON_CLASSES = [
     "main.cron.MyCronJob",
 ]
-
-STATICFILES_FINDERS = ('djangobower.finders.BowerFinder',)
-
-BOWER_COMPONENTS_ROOT = os.path.join(APPLICATION_DIR, 'components')
-BOWER_PATH = '/usr/local/bin/bower'
-BOWER_INSTALLED_APPS = (
-    'd3',
-    'nvd3',
-)
