@@ -7,5 +7,7 @@ django-two-factor-auth
 phonenumbers
 Pillow
 tiingo
-django-chartjs
 django_cron
+python-nvd3
+django-nvd3
+django-bower

@@ -1,41 +1,14 @@
 {% extends "main/base.html" %}
 {% block content %}
-    <div id="container" style="width: 75%;">
-        <canvas id="pie-chart"></canvas>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-
-        var config = {
-        type: 'pie',
-        data: {
-            datasets: [{
-            data: {{ data|safe }},
-            backgroundColor: [
-                '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
-            ],
-            label: 'Population'
-            }],
-            labels: {{ labels|safe }}
-        },
-        options: {
-            responsive: true
-        }
-        };
-
-    window.onload = function() {
-      var ctx = document.getElementById('pie-chart').getContext('2d');
-      window.myPie = new Chart(ctx, config);
-    };
-
-  </script>
-
-
         <h1>Client: {{ user.first_name }} {{user.last_name}}</h1>
         <p>Portfolio: ${{ total_pnl|add:principal }}</p>
         <p>Total PnL: ${{ total_pnl }}</p>
         <p>Principal: ${{ principal }}</p>
+
+
+        <!-- Add a canvas element to hold the chart -->
+        <canvas id="myChart" style="width:80%;"></canvas>
+
         <table class="table">
             <tr>
                 <th>Ticker</th>
@@ -61,4 +34,36 @@
             </tr>
             {% endfor %}
         </table>
+
+    <!-- Script will retrieve the portfolio PnL data and create the chart -->
+    
+<script>
+    var pnlData = {{ pnl_data_json|safe }};
+    var xyValues = pnlData.map(function(p) {
+      return { x: p.date, y: p.pnl };
+    });
+  
+    new Chart("myChart", {
+      type: "line",
+      data: {
+        datasets: [{
+          pointRadius: 4,
+          pointBackgroundColor: "rgb(0,0,255)",
+          data: xyValues
+        }]
+      },
+      options: {
+        legend: {display: false},
+        scales: {
+          xAxes: [{
+            type: "time",
+            time: {
+              unit: "day"
+            }
+          }],
+          yAxes: [{ticks: {min: 6, max:16}}],
+        }
+      }
+    });
+  </script>
 {% endblock content %}
