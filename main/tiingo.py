@@ -15,7 +15,10 @@ def get_meta_data(ticker):
 def get_price_data(ticker):
     url = 'https://api.tiingo.com/tiingo/daily/{}/prices'.format(ticker)
     response = requests.get(url, headers=headers)
-    return response.json()[0]
+    try:
+        return response.json()[0]
+    except KeyError:
+        return "API query limit has been reached"
 
 def get_data_from_api():
     # Set API ETF tickers
