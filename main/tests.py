@@ -1,6 +1,6 @@
 from decimal import Decimal
 from django.test import TestCase, TransactionTestCase
-from .models import Order, Balance
+from .models import Order, Balance, PortfolioPnL
 from django.contrib.auth.models import User
 
 
@@ -100,3 +100,18 @@ class BalanceModelIntegrationTest(TransactionTestCase):
         )
         self.assertEqual(Balance.objects.count(), 2)
         self.assertEqual(Balance.objects.last().ticker, 'GOOG')
+
+class PortfolioPnLTestCase(TestCase):
+    def setUp(self):
+        user = User.objects.create(username='testuser')
+        PortfolioPnL.objects.create(user=user, pnl=100.00, principal=200.00)
+        PortfolioPnL.objects.create(user=user, pnl=-50.00, principal=200.00)
+
+    def test_pnl_calculation(self):
+        portfolio_pnl = PortfolioPnL.objects.get(pnl=100.00)
+        self.assertEqual(portfolio_pnl.pnl, 100.00)
+        self.assertEqual(portfolio_pnl.principal, 200.00)
+
+        portfolio_pnl = PortfolioPnL.objects.get(pnl=-50.00)
+        self.assertEqual(portfolio_pnl.pnl, -50.00)
+        self.assertEqual(portfolio_pnl.principal, 200.00)

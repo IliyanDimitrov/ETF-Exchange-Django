@@ -8,3 +8,4 @@ phonenumbers
 Pillow
 tiingo
 django_cron
+selenium
