@@ -45,22 +45,27 @@ def portfolio(request):
     for balance in balances:
         current_price = get_price_data(balance.ticker)
         balance.current_price = round(Decimal(current_price['close']), 2)
+
         # Calculate the PnL for each ETF
         balance.pnl = (balance.current_price - balance.buy_price) * balance.quantity
 
     # Get the PnL data from the PortfolioPnL model
     pnl_data = PortfolioPnL.objects.filter(user=user).values('date', 'pnl')
+
     # Convert the PnL data to a list of dictionaries
     pnl_data_list = list(pnl_data)
+
+    # # Convert the PnL data to a list of dictionaries
+    # pnl_data_list = list(pnl_data)
 
     # Convert the date objects in the PnL data to strings
     for item in pnl_data_list:
         item['date'] = item['date'].strftime('%Y-%m-%d')
 
     # Convert the PnL data to a JSON object
-    pnl_data_json = json.dumps([{'pnl': str(p['pnl']), 
-                                'date': datetime.strptime(p['date'], '%Y-%m-%d').
-                                strftime('%Y-%m-%d')} for p in pnl_data])
+    pnl_data_json = json.dumps([{'pnl': str(p['pnl']), 'date': datetime.strptime(p['date'], '%Y-%m-%d').strftime('%Y-%m-%d')} for p in pnl_data])
+
+
     context = {
         'user': user,
         'balances': balances,

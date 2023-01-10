@@ -191,12 +191,6 @@ def profile(request):
     }
     return render(request, 'users/profile.html', context)
 
-# Portfolio protected route
-@login_required
-@user_passes_test(is_client)
-def portfolio(request):
-    return render(request, 'main/portfolio.html')
-
 # Verify the user through the activation link
 def activate(request, uidb64, token):
     try:
