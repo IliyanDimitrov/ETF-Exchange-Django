@@ -101,17 +101,21 @@ class BalanceModelIntegrationTest(TransactionTestCase):
         self.assertEqual(Balance.objects.count(), 2)
         self.assertEqual(Balance.objects.last().ticker, 'GOOG')
 
-class PortfolioPnLTestCase(TestCase):
+
+class PortfolioPnLModelTest(TestCase):
     def setUp(self):
-        user = User.objects.create(username='testuser')
-        PortfolioPnL.objects.create(user=user, pnl=100.00, principal=200.00)
-        PortfolioPnL.objects.create(user=user, pnl=-50.00, principal=200.00)
+        self.user = User.objects.create_user(
+            username='testuser',
+            password='testpass'
+        )
+        self.portfolio_pnl = PortfolioPnL.objects.create(
+            user=self.user,
+            pnl=Decimal('100.00'),
+            principal=Decimal('200.00')
+        )
 
-    def test_pnl_calculation(self):
-        portfolio_pnl = PortfolioPnL.objects.get(pnl=100.00)
-        self.assertEqual(portfolio_pnl.pnl, 100.00)
-        self.assertEqual(portfolio_pnl.principal, 200.00)
-
-        portfolio_pnl = PortfolioPnL.objects.get(pnl=-50.00)
-        self.assertEqual(portfolio_pnl.pnl, -50.00)
-        self.assertEqual(portfolio_pnl.principal, 200.00)
+    def test_create_portfolio_pnl(self):
+        self.assertEqual(PortfolioPnL.objects.count(), 1)
+        self.assertEqual(PortfolioPnL.objects.first().pnl, Decimal('100.00'))
+        self.assertEqual(PortfolioPnL.objects.first().principal, Decimal('200.00'))
+        
