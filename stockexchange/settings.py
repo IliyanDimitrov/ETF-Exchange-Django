@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'two_factor',
     'two_factor.plugins.phonenumber',  # <- if you want phone number capability.
     'two_factor.plugins.email',  # <- if you want email capability.
-    'paypal.standard.ipn',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
