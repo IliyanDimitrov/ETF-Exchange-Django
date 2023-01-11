@@ -144,7 +144,8 @@ def update_order_and_balance(request, pk):
     order = get_object_or_404(Order, pk=pk)
     fulfilled = request.POST.get('fulfilled', True)
     order.fulfilled = fulfilled
-    order.fulfilled_date = datetime.datetime.now()
+    # Updated the datetime.datetime.now() to datetime.now() - Django 3.8 compatability issue
+    order.fulfilled_date = datetime.now()
     order.save()
     try:
         # after the order is fulfiled the etf balance is updated and saved

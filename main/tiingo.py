@@ -22,8 +22,8 @@ def get_price_data(ticker):
 
 def get_data_from_api():
     # Set API ETF tickers
-    tickers = ['AAPL', 'GOOG', 'GOOGL', 'TSLA']
-    # tickers = ['GOOG']
+    #tickers = ['AAPL', 'GOOG', 'GOOGL', 'TSLA']
+    tickers = ['GOOG']
 
     # Create empty list to store data
     data = []

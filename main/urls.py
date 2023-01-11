@@ -11,5 +11,4 @@ urlpatterns = [
     path('orders/delete/<int:pk>/', views.delete_order, name='delete_order'),
     path('etf/<str:id>', views.ticker, name='ticker'),
     path('etf-search/', views.etf_search, name='etf_search'),
-
 ]
