@@ -29,7 +29,7 @@ class MyCronJob(CronJobBase):
                     balance.pnl = (balance.current_price - balance.buy_price) * balance.quantity
                     total_pnl += balance.pnl
                     principal += balance.buy_price * balance.quantity
-                portfolio_pnl, created = PortfolioPnL.objects.get_or_create(user=user, defaults={'pnl': total_pnl, 'principal': principal})
+                portfolio_pnl, created = PortfolioPnL.objects.update_or_create(user=user, defaults={'pnl': total_pnl, 'principal': principal})
                 balance.save()
                 portfolio_pnl.save()
             except Exception as e:
